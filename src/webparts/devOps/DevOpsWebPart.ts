@@ -5,7 +5,7 @@ import {
   IPropertyPaneConfiguration,
   PropertyPaneTextField
 } from "@microsoft/sp-webpart-base";
-
+import { sp } from "@pnp/sp";
 import * as strings from "DevOpsWebPartStrings";
 import DevOpsWebPartViewModel, { IDevOpsBindingContext } from "./DevOpsViewModel";
 import { IDevOpsWebPartProps } from "./IDevOpsWebPartProps";
@@ -26,7 +26,7 @@ export default class DevOpsWebPart extends BaseClientSideWebPart<IDevOpsWebPartP
   /**
    * Initialize the web part.
    */
-  protected onInit(): Promise<void> {
+  protected async onInit(): Promise<void> {
     this._id = _instance++;
 
     const tagName: string = `ComponentElement-${this._id}`;
@@ -37,7 +37,10 @@ export default class DevOpsWebPart extends BaseClientSideWebPart<IDevOpsWebPartP
     this._koDescription.subscribe((newValue: string) => {
       this._shouter.notifySubscribers(newValue, "description");
     });
-    const dataService = Environment.type === EnvironmentType.Local ? new MockSPListCollectionService() : new HttpSPListCollectionService(this.context);
+    sp.setup({
+      spfxContext: this.context
+    });
+    const dataService = Environment.type === EnvironmentType.Local ? new MockSPListCollectionService() : new HttpSPListCollectionService();
     const bindings: IDevOpsBindingContext = {
       description: this.properties.description,
       shouter: this._shouter,
@@ -46,7 +49,7 @@ export default class DevOpsWebPart extends BaseClientSideWebPart<IDevOpsWebPartP
 
     ko.applyBindings(bindings, this._componentElement);
 
-    return super.onInit();
+    await super.onInit();
   }
 
   public render(): void {

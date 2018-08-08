@@ -35,7 +35,7 @@ export default class DevOpsViewModel {
   constructor(bindings: IDevOpsBindingContext) {
     this.description(bindings.description);
     bindings.dataService.getListData().then((value)=> {
-      this.listCollection(value.value);
+      this.listCollection(value);
     });
     // when web part description is updated, change this view model's description.
     bindings.shouter.subscribe((value: string) => {

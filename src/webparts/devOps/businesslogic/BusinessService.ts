@@ -1,12 +1,11 @@
-import { ISPListCollection } from '../dataservice/ISPListCollection';
-import { ISPListCollectionService } from '../dataservice/ISPListCollectionService';
+import { ISPList, ISPListCollectionService } from "../dataservice/";
 export class BusinessService {
     private _dataService:ISPListCollectionService;
     constructor(dataSerivce: ISPListCollectionService) {
         this._dataService = dataSerivce;
     }
     public async GetBusinessLogic(): Promise<number> {
-        const lists:ISPListCollection = await this._dataService.getListData();
-        return lists.value.length;
+        const lists:ISPList[] = await this._dataService.getListData();
+        return lists.length;
     }
 }

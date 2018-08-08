@@ -1,4 +1,4 @@
-import {ISPListCollection } from "./";
+import {ISPList } from "./";
 export interface ISPListCollectionService {
-    getListData(): Promise<ISPListCollection>;
+    getListData(): Promise<ISPList[]>;
 }

@@ -1,4 +1,3 @@
-export * from "./ISPListCollection";
 export * from "./ISPList";
 export * from "./ISPListCollectionService";
 export * from "./mockSPListCollectionService";
