@@ -8,6 +8,11 @@ var remapCoverageReporter = require('karma-remap-coverage');
 module.exports = function (config) {
   existingKarmaConfig(config);
   config.reporters.push('junit');
+
+  config.set({
+    basePath: './..',
+  });
+
   config.junitReporter = {
     outputDir: 'temp/', // results will be saved as $outputDir/$browserName.xml
     outputFile: 'test-results.xml', // if included, results will be saved as $outputDir/$browserName/$outputFile
@@ -16,17 +21,23 @@ module.exports = function (config) {
   };
   var coverageReportsRoot = './coverage';
   var coberturaSubDir = 'cobertura';
+  var coverageSubDir = 'lcov';
   var coberturaFileName = 'cobertura.xml';
-  config.coverageReporter.reporters.push({type: 'cobertura', subdir: './' + coberturaSubDir, file: coberturaFileName});
+  config.coverageReporter.reporters.push({type: 'cobertura', subdir: './' + coberturaSubDir, file: coberturaFileName});
   config.remapIstanbulReporter = {
     reports: {
       cobertura: coverageReportsRoot + '/' + coberturaSubDir + '/' + coberturaFileName,
     }
   };
+  config.coverageReporter.reporters.push({
+    type: 'lcov',
+    subdir: './' + coverageSubDir + '/',
+    file: 'lcov.info'
+  });
   remapCoverageReporter = {
     cobertura: coverageReportsRoot + '/' + coberturaSubDir + '/' + coberturaFileName,
   };
-
+  config.browserNoActivityTimeout = 60000;
   config.plugins.push(remapIstanbulReporter);
   config.plugins.push(remapCoverageReporter);
   config.plugins.push(junitReporter);
