@@ -136,7 +136,7 @@ steps:
 
 - task: CopyFiles@2
 
-  displayName: Copy Files to: $(build.artifactstagingdirectory)/drop
+  displayName: Copy Files to: (build.artifactstagingdirectory)/drop
 
   inputs:
 
