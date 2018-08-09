@@ -1,0 +1,159 @@
+resources:
+
+- repo: self
+
+queue:
+
+  name: Hosted
+
+  condition: succeeded()
+
+  demands:
+
+  - npm
+
+  - node.js
+
+  - java
+
+
+
+
+
+steps:
+
+- task: NodeTool@0
+
+  displayName: Use Node 10.x
+
+  inputs:
+
+    versionSpec: 10.x
+
+    checkLatest: true
+
+
+
+- task: Npm@1
+
+  displayName: npm install
+
+  inputs:
+
+    verbose: false
+
+
+
+- task: Gulp@0
+
+  displayName: gulp test
+
+  inputs:
+
+    targets: test
+
+    publishJUnitResults: true
+
+    testResultsFiles: '**/test-*.xml'
+
+
+
+- task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
+
+  displayName: Prepare analysis on SonarQube
+
+  inputs:
+
+    SonarQube: sonarbaywet
+
+    scannerMode: CLI
+
+    configMode: manual
+
+    cliProjectKey: spfxdevops
+
+    cliProjectName: SpFxDevOps
+
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+
+
+
+- task: SonarSource.sonarqube.6D01813A-9589-4B15-8491-8164AEB38055.SonarQubeAnalyze@4
+
+  displayName: Run Code Analysis
+
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+
+
+
+- task: SonarSource.sonarqube.291ed61f-1ee4-45d3-b1b0-bf822d9095ef.SonarQubePublish@4
+
+  displayName: Publish Quality Gate Result
+
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+
+
+
+- task: PublishCodeCoverageResults@1
+
+  displayName: Publish Code Coverage Results $(Build.SourcesDirectory)/temp/coverage/cobertura/cobertura.xml
+
+  inputs:
+
+    codeCoverageTool: Cobertura
+
+    summaryFileLocation: '$(Build.SourcesDirectory)/temp/coverage/cobertura/cobertura.xml'
+
+    reportDirectory: '$(Build.SourcesDirectory)/temp/coverage/cobertura'
+
+
+
+- task: Gulp@0
+
+  displayName: gulp bundle
+
+  inputs:
+
+    targets: bundle
+
+    arguments: '--ship'
+
+  continueOnError: true
+
+
+
+- task: Gulp@0
+
+  displayName: gulp package-solution
+
+  inputs:
+
+    targets: 'package-solution'
+
+    arguments: '--ship'
+
+
+
+- task: CopyFiles@2
+
+  displayName: Copy Files to: $(build.artifactstagingdirectory)/drop
+
+  inputs:
+
+    Contents: '**\*.sppkg'
+
+    TargetFolder: '$(build.artifactstagingdirectory)/drop'
+
+
+
+- task: PublishBuildArtifacts@1
+
+  displayName: Publish Artifact:  drop
+
+  inputs:
+
+    PathtoPublish: '$(build.artifactstagingdirectory)/drop'
+
+
+
+
