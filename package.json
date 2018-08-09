@@ -29,9 +29,7 @@
     "ajv": "~5.2.2",
     "chai-as-promised": "^6.0.0",
     "gulp": "~3.9.1",
-    "gulp-spsync-creds": "^2.3.8",
-    "karma-junit-reporter": "^1.2.0",
-    "node-sppkg-deploy": "^1.1.1"
+    "karma-junit-reporter": "^1.2.0"
   },
   "scripts": {
     "build": "gulp bundle",
