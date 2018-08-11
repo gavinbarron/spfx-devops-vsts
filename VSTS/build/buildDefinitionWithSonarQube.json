@@ -63,16 +63,19 @@
   "tags": [],
   "_links": {
     "self": {
-      "href": "https://contoso.visualstudio.com/b80138c3-28df-4282-bc1d-6fa534f75b70/_apis/build/Definitions/13?revision=32"
+      "href": "https://contoso.visualstudio.com/b80138c3-28df-4282-bc1d-6fa534f75b70/_apis/build/Definitions/13?revision=41"
     },
     "web": {
-      "href": "https://contoso.visualstudio.com/_permalink/_build/index?collectionId=1129b30b-85e7-4110-a248-8c49be09dc06&projectId=b80138c3-28df-4282-bc1d-6fa534f75b70&definitionId=13"
+      "href": "https://contoso.visualstudio.com/b80138c3-28df-4282-bc1d-6fa534f75b70/_build/definition?definitionId=13"
     },
     "editor": {
-      "href": "https://contoso.visualstudio.com/_permalink/_build/definitionEditor?collectionId=1129b30b-85e7-4110-a248-8c49be09dc06&projectId=b80138c3-28df-4282-bc1d-6fa534f75b70&definitionId=13"
+      "href": "https://contoso.visualstudio.com/b80138c3-28df-4282-bc1d-6fa534f75b70/_build/designer?id=13&_a=edit-build-definition"
+    },
+    "badge": {
+      "href": "https://contoso.visualstudio.com/b80138c3-28df-4282-bc1d-6fa534f75b70/_apis/build/status/13"
     }
   },
-  "comment": "enabling SQ SA only on dev builds",
+  "comment": "removed obsolete steps",
   "jobAuthorizationScope": 1,
   "jobTimeoutInMinutes": 60,
   "jobCancelTimeoutInMinutes": 5,
@@ -80,6 +83,24 @@
     "phases": [
       {
         "steps": [
+          {
+            "environment": {},
+            "enabled": true,
+            "continueOnError": false,
+            "alwaysRun": false,
+            "displayName": "Use Node 10.x",
+            "timeoutInMinutes": 0,
+            "condition": "succeeded()",
+            "task": {
+              "id": "31c75bbb-bcdf-4706-8d7c-4da6a1959bc2",
+              "versionSpec": "0.*",
+              "definitionType": "task"
+            },
+            "inputs": {
+              "versionSpec": "10.x",
+              "checkLatest": "true"
+            }
+          },
           {
             "environment": {},
             "enabled": true,
@@ -161,7 +182,7 @@
               "cliProjectVersion": "1.0",
               "projectVersion": "1.0",
               "cliSources": ".",
-              "extraProperties": "sonar.sources=src\nsonar.exclusions=**/node_modules/**,**/dist/**,**/.tmp/**,**/.vscode/**,**/webpack/**, **/test/**, **/*.js, *.js\nsonar.test.inclusions=src/**/*.test.ts\nsonar.ts.tslint.configPath=tslint.json\nsonar.typescript.lcov.reportPaths=test/coverage/lcov/lcov.info"
+              "extraProperties": ""
             }
           },
           {
@@ -216,35 +237,6 @@
               "reportDirectory": "$(Build.SourcesDirectory)/temp/coverage/cobertura",
               "additionalCodeCoverageFiles": "",
               "failIfCoverageEmpty": "false"
-            }
-          },
-          {
-            "environment": {},
-            "enabled": true,
-            "continueOnError": false,
-            "alwaysRun": false,
-            "displayName": "gulp update-manifest",
-            "timeoutInMinutes": 0,
-            "condition": "succeeded()",
-            "refName": "Gulp8",
-            "task": {
-              "id": "b82cfbe4-34f9-40f5-889e-c8842ca9dd9d",
-              "versionSpec": "0.*",
-              "definitionType": "task"
-            },
-            "inputs": {
-              "gulpFile": "gulpfile.js",
-              "targets": "update-manifest",
-              "arguments": "--cdnpath \"https://publiccdn.sharepointonline.com/contoso.sharepoint.com/18650069eeb2113d11c3e72bc3a1e6e6dc9a22e7deef226155cb3b618b99e3e77ae36ef4/\"",
-              "cwd": "",
-              "gulpjs": "node_modules/gulp/bin/gulp.js",
-              "publishJUnitResults": "false",
-              "testResultsFiles": "**/TEST-*.xml",
-              "testRunTitle": "",
-              "enableCodeCoverage": "false",
-              "testFramework": "Mocha",
-              "srcFiles": "",
-              "testFiles": "test/*.js"
             }
           },
           {
@@ -320,55 +312,11 @@
             },
             "inputs": {
               "SourceFolder": "",
-              "Contents": "config\\**\\*\ndist\\**\\*\nlib\\**\\*\nsharepoint\\**\\*\ntemp\\**\\*\ntypings\\**\\*\ngulpfile.js\npackage.json\n**\\*.sppkg",
+              "Contents": "**\\*.sppkg",
               "TargetFolder": "$(build.artifactstagingdirectory)/drop",
               "CleanTargetFolder": "false",
               "OverWrite": "false",
               "flattenFolders": "false"
-            }
-          },
-          {
-            "environment": {},
-            "enabled": true,
-            "continueOnError": false,
-            "alwaysRun": false,
-            "displayName": "Copy Files to: $(build.artifactstagingdirectory)/package",
-            "timeoutInMinutes": 0,
-            "condition": "succeeded()",
-            "task": {
-              "id": "5bfb729a-a7c8-4a78-a7c3-8d717bb7c13c",
-              "versionSpec": "2.*",
-              "definitionType": "task"
-            },
-            "inputs": {
-              "SourceFolder": "",
-              "Contents": "**\\*.sppkg",
-              "TargetFolder": "$(build.artifactstagingdirectory)/package",
-              "CleanTargetFolder": "false",
-              "OverWrite": "false",
-              "flattenFolders": "false"
-            }
-          },
-          {
-            "environment": {},
-            "enabled": true,
-            "continueOnError": false,
-            "alwaysRun": false,
-            "displayName": "Publish Artifact: package",
-            "timeoutInMinutes": 0,
-            "condition": "succeeded()",
-            "task": {
-              "id": "2ff763a7-ce83-4e1f-bc89-0ae63477cebe",
-              "versionSpec": "1.*",
-              "definitionType": "task"
-            },
-            "inputs": {
-              "PathtoPublish": "$(build.artifactstagingdirectory)/package",
-              "ArtifactName": "package",
-              "ArtifactType": "Container",
-              "TargetPath": "\\\\my\\share\\$(Build.DefinitionName)\\$(Build.BuildNumber)",
-              "Parallel": "false",
-              "ParallelCount": "8"
             }
           },
           {
@@ -436,13 +384,13 @@
     "url": "https://app.vssps.visualstudio.com/Ac310e65e-2e47-4665-b411-1b0912dbb016/_apis/Identities/536d4ee9-0ae3-4d12-8a9d-843cc5edf21d",
     "_links": {
       "avatar": {
-        "href": "https://contoso.visualstudio.com/_api/_common/identityImage?id=536d4ee9-0ae3-4d12-8a9d-843cc5edf21d"
+        "href": "https://contoso.visualstudio.com/_apis/GraphProfile/MemberAvatars/aad.YzI3ZmZjYWItNTM2YS03N2NlLWJiOGEtZTdhZjg4ODFlODdi"
       }
     },
     "id": "536d4ee9-0ae3-4d12-8a9d-843cc5edf21d",
     "uniqueName": "",
     "imageUrl": "https://contoso.visualstudio.com/_api/_common/identityImage?id=536d4ee9-0ae3-4d12-8a9d-843cc5edf21d",
-    "descriptor": "msa.NDFjYjAxOTctZmJjOC03MGEyLThjODUtNjUxNTM4MjUyZjY4"
+    "descriptor": "aad.YzI3ZmZjYWItNTM2YS03N2NlLWJiOGEtZTdhZjg4ODFlODdi"
   },
   "drafts": [],
   "queue": {
@@ -462,20 +410,20 @@
   },
   "id": 13,
   "name": "SpFxDevOps",
-  "url": "https://contoso.visualstudio.com/b80138c3-28df-4282-bc1d-6fa534f75b70/_apis/build/Definitions/13?revision=32",
+  "url": "https://contoso.visualstudio.com/b80138c3-28df-4282-bc1d-6fa534f75b70/_apis/build/Definitions/13?revision=41",
   "uri": "vstfs:///Build/Definition/13",
   "path": "\\",
   "type": 2,
   "queueStatus": 0,
-  "revision": 32,
-  "createdDate": "2018-03-24T22:57:32.537Z",
+  "revision": 41,
+  "createdDate": "2018-08-09T22:18:58.597Z",
   "project": {
     "id": "b80138c3-28df-4282-bc1d-6fa534f75b70",
     "name": "Sessions",
     "description": "Stockage du code de mes sessions quand pas sur github",
     "url": "https://contoso.visualstudio.com/_apis/projects/b80138c3-28df-4282-bc1d-6fa534f75b70",
     "state": "wellFormed",
-    "revision": 438062069,
+    "revision": 438062152,
     "visibility": 0
   }
 }
